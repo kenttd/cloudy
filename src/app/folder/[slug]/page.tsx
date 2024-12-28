@@ -16,7 +16,6 @@ import SideBar from "@/components/Sidebar";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -31,8 +30,7 @@ export default function Component() {
   const [files, setFiles] = useState<null | files[]>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [breadcrumb, setBreadcrumb] = useState(null);
-  const { user, isFetched, isLoading, error, fetchUser, refresh } =
-    useUserStore();
+  const { user, fetchUser, refresh } = useUserStore();
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -60,7 +58,7 @@ export default function Component() {
     setRefreshKey((prevKey) => prevKey + 1);
     refresh("/api/user");
   };
-  const folderName = useRef("");
+  const folderName = useRef<HTMLInputElement>(null);
 
   return (
     <SidebarProvider>
@@ -78,16 +76,6 @@ export default function Component() {
                   ) : (
                     <Skeleton className="h-4 w-5" />
                   )}
-                  {/* <div className="flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search files and folders..."
-                    className="w-full bg-muted pl-8 pr-4 focus:bg-background focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-              </div> */}
                 </div>
               </div>
             </header>

@@ -8,7 +8,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Check, Clipboard, Cross, UserPlus, X } from "lucide-react";
+import { Check, Clipboard, UserPlus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { files } from "./FileCard";
@@ -17,11 +17,10 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { Skeleton } from "./ui/skeleton";
 
 export default function ShareFolderDialog({ file }: { file: files }) {
   const [list, setList] = useState<[] | null>();
-  const [email, setEmail] = useState(null);
+  const [email, setEmail] = useState<string>("");
   const [checked, setChecked] = useState(file.is_public);
   const [usersWithAccess, setUsersWithAccess] = useState<[] | null>(null);
   const [refresh, setRefresh] = useState(false);

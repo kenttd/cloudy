@@ -61,7 +61,7 @@ export default function Component() {
     refresh("/api/user");
   };
   console.log("handle home", handleRefresh);
-  const folderName = useRef("");
+  const folderName = useRef<HTMLInputElement>(null);
   return (
     <SidebarProvider>
       <SideBar user={user} handleRefresh={handleRefresh} />

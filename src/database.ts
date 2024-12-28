@@ -2,7 +2,7 @@ import mongoose, { ConnectOptions } from "mongoose";
 
 let isConnected = false;
 
-const connectDB = async (): Promise<typeof mongoose> => {
+const connectDB = async () => {
   if (isConnected) {
     console.log("Using existing database connection");
     return mongoose; // Return mongoose instance if already connected
