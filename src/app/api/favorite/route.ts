@@ -28,8 +28,8 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
+  const cookieStore = cookies();
   try {
-    const cookieStore = cookies();
     const token = cookieStore.get("token");
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {

@@ -5,6 +5,7 @@ import { users } from "@/models/users";
 import { folders } from "@/models/folders";
 
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
   try {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
@@ -12,7 +13,6 @@ export async function GET(request: NextRequest) {
       process.env.GOOGLE_REDIRECT_URI
     );
 
-    const searchParams = request.nextUrl.searchParams;
     const error = searchParams.get("error");
     const code = searchParams.get("code") ?? "";
 
@@ -90,63 +90,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-// import { google } from "googleapis";
-// import { NextRequest, NextResponse } from "next/server";
-// import db from "@/database";
-// import jwt from "jsonwebtoken";
-// import { users } from "@/models/users";
-
-// export async function GET(request: NextRequest) {
-//   try {
-//     const response = NextResponse.redirect(`${process.env.BASE_URL}/`, {
-//       // status: 200,
-//     });
-
-//     const oauth2Client = new google.auth.OAuth2(
-//       process.env.GOOGLE_CLIENT_ID,
-//       process.env.GOOGLE_CLIENT_SECRET,
-//       process.env.GOOGLE_REDIRECT_URI
-//     );
-//     const searchParams = request.nextUrl.searchParams;
-//     const error = searchParams.get("error");
-//     const code = searchParams.get("code") ?? "";
-//     if (error) {
-//       return Response.json({ error: error });
-//     } else {
-//       const { tokens } = await oauth2Client.getToken(code);
-//       console.log(tokens);
-//       const res = await fetch("https://www.googleapis.com/oauth2/v1/userinfo", {
-//         headers: {
-//           Authorization: `Bearer ${tokens.access_token}`,
-//         },
-//       });
-//       const data = await res.json();
-//       const userRes = await users.findOne({ email: data.email });
-//       console.log(userRes);
-//       if (!userRes) {
-//         console.log(userRes);
-//         const newUser = new users({
-//           google_id: data.id,
-//           email: data.email,
-//           name: data.name,
-//           avatar: data.picture,
-//         });
-//         await newUser.save();
-//       }
-//       const token = jwt.sign(
-//         { email: data.email },
-//         process.env.JWT_SECRET ?? ""
-//       );
-//       response.cookies.set("token", token, {
-//         path: "/",
-//         httpOnly: true,
-//         secure: true,
-//         maxAge: 60 * 60 * 24 * 7, // 1 week
-//       });
-//       return response;
-//     }
-//   } catch (err) {
-//     console.error(err);
-//     return NextResponse.redirect("https://github.com");
-//   }
-// }

@@ -1,10 +1,9 @@
 import { users } from "@/models/users";
-import { useSearchParams } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
   try {
-    const searchParams = req.nextUrl.searchParams;
     const keyword = searchParams.get("keyword");
 
     if (!keyword) return NextResponse.json({}, { status: 400 });

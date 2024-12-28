@@ -19,6 +19,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { s3key: string } }
 ) {
+  const cookieStore = cookies();
   try {
     const s3key = decodeURIComponent(params.s3key);
     const filename = s3key.split("/").pop(); // Get the last part of the path
@@ -32,7 +33,6 @@ export async function GET(
     const folder = await folders.findById(folderId);
 
     if (!folder.is_public) {
-      const cookieStore = cookies();
       const token = cookieStore.get("token");
       const { value }: any = token || {};
       const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
@@ -69,7 +69,7 @@ export async function GET(
       headers,
       status: 200,
     });
-  } catch (error:unknown) {
+  } catch (error: unknown) {
     console.error("Error fetching file:", error);
     return NextResponse.json(
       { error: "Failed to fetch file" },

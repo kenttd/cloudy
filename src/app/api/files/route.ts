@@ -17,8 +17,8 @@ const s3Client = new S3Client({
 });
 
 export async function GET() {
+  const cookieStore = cookies();
   try {
-    const cookieStore = cookies();
     const token = cookieStore.get("token");
     const loc = cookieStore.get("location");
     const { value }: any = token || {};
@@ -43,13 +43,14 @@ export async function GET() {
 }
 
 export async function DELETE(req: Request) {
+  const cookieStore = cookies();
   try {
     const data = await req.json();
     const file = await files.findOne({ _id: new ObjectId(data.id) });
     if (!file) {
       return NextResponse.json({ message: "File not found" }, { status: 404 });
     }
-    const cookieStore = cookies();
+
     const token = cookieStore.get("token");
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {

@@ -10,6 +10,7 @@ export async function GET(
   req: Request,
   { params }: { params: { folderId: string } }
 ) {
+  const cookieStore = cookies();
   const folderId = params.folderId;
   const folder = await folders.findById(folderId);
   if (!folder) {
@@ -17,7 +18,6 @@ export async function GET(
   }
 
   if (!folder.is_public) {
-    const cookieStore = cookies();
     const token = cookieStore.get("token");
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {

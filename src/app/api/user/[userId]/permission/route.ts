@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request, context: { params: Params }) {
+  const cookieStore = cookies();
   try {
     const data = await req.json();
     const folderId = data.folderId;
@@ -18,7 +19,6 @@ export async function POST(req: Request, context: { params: Params }) {
     });
     if (permissionExist) return NextResponse.json({}, { status: 400 });
 
-    const cookieStore = cookies();
     const token = cookieStore.get("token");
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
@@ -41,12 +41,13 @@ export async function POST(req: Request, context: { params: Params }) {
 }
 
 export async function DELETE(req: Request, context: { params: Params }) {
+  const cookieStore = cookies();
   try {
     const data = await req.json();
     const folderId = data.folderId;
     const userId = context.params.userId;
     if (!folderId) return NextResponse.json({}, { status: 400 });
-    const cookieStore = cookies();
+
     const token = cookieStore.get("token");
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {

@@ -42,10 +42,11 @@ export async function GET() {
 }
 
 export async function POST(req: any) {
+  const cookieStore = cookies();
   try {
     const formData = await req.formData();
     const filesData = formData.getAll("file");
-    const cookieStore = cookies();
+
     const token = cookieStore.get("token");
     const loc = cookieStore.get("location");
     const { value }: any = token || {};

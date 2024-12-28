@@ -4,9 +4,10 @@ import { users } from "@/models/users";
 import { NextResponse } from "next/server";
 
 export async function GET() {
+  const cookieStore = cookies();
   try {
     console.log("masuk");
-    const cookieStore = cookies();
+
     const token = cookieStore.get("token");
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
