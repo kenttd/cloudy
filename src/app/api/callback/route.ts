@@ -3,9 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { users } from "@/models/users";
 import { folders } from "@/models/folders";
+import connectDB from "@/database";
 
 export async function GET(request: NextRequest) {
   console.log(process.env.MONGO_URI);
+  await connectDB();
   const searchParams = request.nextUrl.searchParams;
   try {
     const oauth2Client = new google.auth.OAuth2(
