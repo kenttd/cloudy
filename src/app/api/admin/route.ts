@@ -2,19 +2,24 @@ import { users } from "@/models/users";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const queryUsers = await users.find();
-  const result = queryUsers.map((user) => {
-    return {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      formatted_storage_limit: formatBytes(user.storage_limit),
-      formatted_used_storage: formatBytes(user.used_storage),
-      created_at: new Date(user.created_at).toDateString(),
-    };
-  });
-  return NextResponse.json(result);
+  try {
+    const queryUsers = await users.find();
+    const result = queryUsers.map((user) => {
+      return {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        formatted_storage_limit: formatBytes(user.storage_limit),
+        formatted_used_storage: formatBytes(user.used_storage),
+        created_at: new Date(user.created_at).toDateString(),
+      };
+    });
+    return NextResponse.json(result);
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json({ err }, { status: 500 });
+  }
 }
 function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 Bytes";
