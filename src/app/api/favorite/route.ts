@@ -10,18 +10,18 @@ export async function POST(req: Request) {
     const data = await req.json();
     console.log(data);
     if (data.type == "folder") {
-      const res = await folders.updateOne(
+      await folders.updateOne(
         { _id: data._id },
         { is_favorite: data.is_favorite }
       );
     } else {
-      const res = await files.updateOne(
+      await files.updateOne(
         { _id: data._id },
         { is_favorite: data.is_favorite }
       );
     }
     return NextResponse.json({}, { status: 200 });
-  } catch (err) {
+  } catch (err: unknown) {
     console.log(err);
     return NextResponse.json({ err }, { status: 500 });
   }

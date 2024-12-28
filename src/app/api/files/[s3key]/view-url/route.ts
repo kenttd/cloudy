@@ -1,4 +1,3 @@
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
@@ -22,7 +21,6 @@ export async function GET(
 ) {
   try {
     const s3key = decodeURIComponent(params.s3key);
-    const filename = s3key.split("/").pop();
     const file = await files.findOne({ s3_key: s3key });
     if (!file)
       return NextResponse.json(
@@ -55,7 +53,7 @@ export async function GET(
     });
     const viewUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 });
     return NextResponse.json({ viewUrl });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error(err);
     return NextResponse.json({}, { status: 500 });
   }

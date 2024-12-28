@@ -1,10 +1,8 @@
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
-import db from "@/database";
 import jwt from "jsonwebtoken";
 import { users } from "@/models/users";
 import { folders } from "@/models/folders";
-import { permissions } from "@/models/permissions";
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,38 +1,17 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import FileCard, { files } from "@/components/FileCard";
-import { FolderPlus, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import FileCardSkeleton from "@/components/FileCardSkeleton";
 import useUserStore from "@/store/UserStore";
-import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import SideBar from "@/components/Sidebar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@radix-ui/react-dropdown-menu";
-import { toast } from "sonner";
 import { AdminTable } from "@/components/AdminTable";
 
 export default function Component() {
   const [refreshKey, setRefreshKey] = useState(0);
-  const [breadcrumb, setBreadcrumb] = useState(null);
-  const { user, isFetched, isLoading, error, fetchUser, refresh } =
-    useUserStore();
+  const { user, fetchUser, refresh } = useUserStore();
   const [data, setData] = useState([]);
 
   useEffect(() => {

@@ -22,7 +22,7 @@ export async function GET() {
     const token = cookieStore.get("token");
     const loc = cookieStore.get("location");
     const { value }: any = token || {};
-    const { value: valueLoc }: any = loc || {};
+    const { value: valueLoc } = loc || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
       id: string;
     };

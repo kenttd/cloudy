@@ -69,7 +69,7 @@ export async function GET(
       headers,
       status: 200,
     });
-  } catch (error) {
+  } catch (error:unknown) {
     console.error("Error fetching file:", error);
     return NextResponse.json(
       { error: "Failed to fetch file" },

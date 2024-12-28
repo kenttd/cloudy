@@ -35,7 +35,7 @@ export async function GET(
     const folderId = new Types.ObjectId(rootFolder._id);
     const contents = await getFolderContents(folderId);
     return NextResponse.json({ user: userResult, contents });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

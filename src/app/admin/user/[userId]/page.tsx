@@ -1,12 +1,7 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import FileCard, { files } from "@/components/FileCard";
 import { ChevronRight, File, Folder, FolderPlus, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import FileCardSkeleton from "@/components/FileCardSkeleton";
 import useUserStore from "@/store/UserStore";
-import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   SidebarInset,
   SidebarProvider,
@@ -28,9 +23,7 @@ import Image from "next/image";
 export default function Component() {
   const params = useParams<{ userId: string }>();
   const [refreshKey, setRefreshKey] = useState(0);
-  const [breadcrumb, setBreadcrumb] = useState(null);
-  const { user, isFetched, isLoading, error, fetchUser, refresh } =
-    useUserStore();
+  const { user, fetchUser, refresh } = useUserStore();
   const [userCur, setUserCur] = useState<any>();
   const [contents, setContents] = useState(null);
 
