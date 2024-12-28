@@ -19,7 +19,7 @@ const userSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   avatar: { type: String },
-  storage_limit: { type: Number, default: 10 * 1024 * 1024 * 1024 }, // 10GB in bytes
+  storage_limit: { type: Number, default: 0.5 * 1024 * 1024 * 1024 }, // 10GB in bytes
   used_storage: { type: Number, default: 0 },
   role: {
     type: String,
