@@ -6,7 +6,6 @@ import { jwtVerify, SignJWT } from "jose";
 export async function middleware(request: NextRequest) {
   try {
     // return NextResponse.next();
-    console.log(request.nextUrl.pathname);
     if (
       request.nextUrl.pathname.startsWith("/login") ||
       request.nextUrl.pathname === "/api/callback" ||
