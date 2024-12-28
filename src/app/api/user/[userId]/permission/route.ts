@@ -11,6 +11,13 @@ export async function POST(req: Request, context: { params: Params }) {
     const folderId = data.folderId;
     const userId = context.params.userId;
     if (!folderId) return NextResponse.json({}, { status: 400 });
+
+    const permissionExist = await permissions.findOne({
+      userId: userId,
+      folderId: folderId,
+    });
+    if (permissionExist) return NextResponse.json({}, { status: 400 });
+
     const cookieStore = cookies();
     const token = cookieStore.get("token");
     const { value }: any = token || {};
@@ -23,6 +30,34 @@ export async function POST(req: Request, context: { params: Params }) {
     });
     if (!allowed) return NextResponse.json({}, { status: 403 });
     await permissions.create({
+      userId: userId,
+      folderId: folderId,
+    });
+    return NextResponse.json({}, { status: 200 });
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json({}, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request, context: { params: Params }) {
+  try {
+    const data = await req.json();
+    const folderId = data.folderId;
+    const userId = context.params.userId;
+    if (!folderId) return NextResponse.json({}, { status: 400 });
+    const cookieStore = cookies();
+    const token = cookieStore.get("token");
+    const { value }: any = token || {};
+    const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
+      id: string;
+    };
+    const allowed = await folders.findOne({
+      user_id: decoded.id,
+      _id: folderId,
+    });
+    if (!allowed) return NextResponse.json({}, { status: 403 });
+    await permissions.deleteOne({
       userId: userId,
       folderId: folderId,
     });

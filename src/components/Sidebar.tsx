@@ -30,6 +30,7 @@ import {
   Folder,
   HomeIcon,
   LogOut,
+  Shield,
   Sparkles,
   Star,
   Trash2,
@@ -38,8 +39,11 @@ import {
 import Image from "next/image";
 import { useSidebar } from "@/components/ui/sidebar";
 import { Progress } from "./ui/progress";
+import { useEffect, useState } from "react";
+import { url } from "inspector";
+import { toast } from "sonner";
 
-const data = [
+const sidebarUser = [
   {
     name: "My Drive",
     url: "/",
@@ -61,6 +65,33 @@ const data = [
     icon: Star,
   },
 ];
+const sidebarAdmin = [
+  {
+    name: "My Drive",
+    url: "/",
+    icon: Folder,
+  },
+  {
+    name: "Shared with me",
+    url: "/shared-with-me",
+    icon: Users,
+  },
+  {
+    name: "Trash",
+    url: "/trash",
+    icon: Trash2,
+  },
+  {
+    name: "Starred",
+    url: "/starred",
+    icon: Star,
+  },
+  {
+    name: "Admin Actions",
+    url: "/admin",
+    icon: Shield,
+  },
+];
 export default function SideBar({
   user,
   handleRefresh,
@@ -71,6 +102,7 @@ export default function SideBar({
     avatar: string;
     used_storage: number;
     storage_limit: number;
+    role: string;
     _id: string;
   };
   handleRefresh: () => void;
@@ -86,6 +118,14 @@ export default function SideBar({
   } = useSidebar();
   console.log("user", user);
   console.log("handle sidebar", handleRefresh);
+  const [data, setData] = useState<
+    { name: string; url: string; icon: React.ComponentType }[]
+  >([]);
+  useEffect(() => {
+    if (user.role == "admin") setData(sidebarAdmin);
+    else setData(sidebarUser);
+  }, [user]);
+
   return (
     <Sidebar
       collapsible="icon"
@@ -101,9 +141,16 @@ export default function SideBar({
       <SidebarHeader>
         <div className="flex items-center space-x-2">
           <Image src={Logo} alt="cloudy's logo" height={50} />
-          <h2 className="text-xl font-bold group-data-[collapsible=icon]:hidden">
-            cloudy
-          </h2>
+          <div className="flex items-end">
+            <h2 className="text-xl font-bold group-data-[collapsible=icon]:hidden">
+              cloudy
+            </h2>
+            {user.role == "admin" && (
+              <h2 className="text-xs font-semibold group-data-[collapsible=icon]:hidden">
+                for admin
+              </h2>
+            )}
+          </div>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -112,7 +159,7 @@ export default function SideBar({
             {data.map((item) => (
               <SidebarMenuItem key={item.name}>
                 <SidebarMenuButton asChild>
-                  <a href={item.url}>
+                  <a href={item.url} className="hover:bg-gray-300">
                     <item.icon />
                     <span>{item.name}</span>
                   </a>
@@ -131,7 +178,7 @@ export default function SideBar({
                     value={getPercentage(user.used_storage, user.storage_limit)}
                   />
                   <p className="text-xs mt-1">{`${formatBytes(
-                    user.used_storage,
+                    user.used_storage
                   )} of ${formatBytes(user.storage_limit)} used`}</p>
                 </div>
               </>
@@ -205,23 +252,8 @@ export default function SideBar({
                     Upgrade to Pro
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                {/* <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell />
-                    Notifications
-                  </DropdownMenuItem>
-                </DropdownMenuGroup> */}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-3" />
                   Log out
                 </DropdownMenuItem>
@@ -245,4 +277,19 @@ function formatBytes(bytes: number): string {
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   const formattedSize = parseFloat((bytes / Math.pow(1024, i)).toFixed(2));
   return `${formattedSize} ${sizes[i]}`;
+}
+
+function logout() {
+  const aPromise = fetch("/api/logout").then(() => {
+    window.location.href = "/login";
+  });
+  toast.promise(aPromise, {
+    loading: "Logging out...",
+    success: (result) => {
+      return "Logged out. Redirecting...";
+    },
+    error: (error) => {
+      return "Error logging out.";
+    },
+  });
 }

@@ -5,10 +5,15 @@ import { jwtVerify, SignJWT } from "jose";
 
 export async function middleware(request: NextRequest) {
   try {
+    // return NextResponse.next();
+    console.log(request.nextUrl.pathname);
     if (
       request.nextUrl.pathname.startsWith("/login") ||
       request.nextUrl.pathname === "/api/callback" ||
-      request.nextUrl.pathname === "/api/getGoogleUrl"
+      request.nextUrl.pathname === "/api/getGoogleUrl" ||
+      request.nextUrl.pathname.startsWith("/public") ||
+      request.nextUrl.pathname.startsWith("/api/sharedWithMe") ||
+      request.nextUrl.pathname.startsWith("/api/files")
     ) {
       return NextResponse.next();
     }

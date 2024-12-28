@@ -1,18 +1,50 @@
-import { NextResponse } from "next/server";
-import { users } from "@/models/users";
-
 import { files } from "@/models/files";
 import { folders } from "@/models/folders";
+import { users } from "@/models/users";
 import { Types } from "mongoose";
+import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(
+  request: Request,
+  { params }: { params: { userId: string } }
+) {
   try {
-    const folderId = new Types.ObjectId("66fe06d010c51ec9c52178b2"); // Replace with the desired folder ID
+    const user = await users.findOne({ _id: params.userId });
+    if (!user) {
+      return new NextResponse(null, { status: 404 });
+    }
+    const userResult = {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      avatar: user.avatar,
+      role: user.role,
+      formatted_storage_limit: formatBytes(user.storage_limit),
+      formatted_used_storage: formatBytes(user.used_storage),
+      created_at: new Date(user.created_at).toDateString(),
+    };
+    // user.formatted_storage_limit = formatBytes(user.storage_limit);
+    // user.formatted_used_storage = formatBytes(user.used_storage);
+    // user.created_at = new Date(user.created_at).toDateString();
+
+    const rootFolder = await folders.findOne({
+      parent_folder: null,
+      user_id: user._id,
+    });
+
+    const folderId = new Types.ObjectId(rootFolder._id);
     const contents = await getFolderContents(folderId);
-    return NextResponse.json(contents);
+    return NextResponse.json({ user: userResult, contents });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 Bytes";
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  const formattedSize = parseFloat((bytes / Math.pow(1024, i)).toFixed(2));
+  return `${formattedSize} ${sizes[i]}`;
 }
 
 interface FolderContents {
@@ -71,22 +103,3 @@ async function getFolderContents(
     subfolders: subfolderContents.filter(Boolean) as FolderContents[], // Filter out null values
   };
 }
-
-// export async function GET() {
-//   const result = await files.create({
-//     user_id: "userId",
-//     file_name: "ile.name",
-//     s3_key: "${userId}/${file.name}",
-//     file_size: "file.size",
-//     content_type: "file.type",
-//     folder_id: "location",
-//   });
-//   console.log(result);
-//   return NextResponse.json(result);
-
-//   // // You can now access collections using the `mongoose` instance
-//   // const myCollection = db.connection.collection("test");
-
-//   // const docs = await myCollection.find({}).toArray();
-//   // return NextResponse.json(docs);
-// }

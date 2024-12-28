@@ -9,6 +9,7 @@ import {
   ExternalLink,
   FolderOpen,
   Star,
+  Trash2,
 } from "lucide-react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
@@ -55,7 +56,7 @@ export default function FileCard({
             {file.type == "folder" ? (
               <FolderButtons file={file} router={router} />
             ) : (
-              <FileButtons file={file} />
+              <FileButtons file={file} handleRefresh={handleRefresh} />
             )}
             <Button
               variant="ghost"
@@ -97,7 +98,13 @@ export default function FileCard({
   );
 }
 
-function FileButtons({ file }: { file: files }) {
+function FileButtons({
+  file,
+  handleRefresh,
+}: {
+  file: files;
+  handleRefresh: () => void;
+}) {
   return (
     <>
       <Button
@@ -155,6 +162,38 @@ function FileButtons({ file }: { file: files }) {
         <ExternalLink className="h-4 w-4" />
         <span className="sr-only">Open</span>
       </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="group-hover:opacity-100"
+        onClick={() => {
+          const aPromise = fetch("/api/files", {
+            method: "DELETE",
+            body: JSON.stringify({
+              id: file._id,
+            }),
+          }).then(async (response) => {
+            if (!response.ok) {
+              throw new Error("Upload failed");
+            }
+            return response.json();
+          });
+          toast.promise(aPromise, {
+            loading: `Deleting a file...`,
+            success: async (data: any) => {
+              handleRefresh();
+              return `File deleted successfully`;
+            },
+            error: (err: any) => {
+              console.error("Upload failed:", err);
+              return "Failed to delete a file";
+            },
+          });
+        }}
+      >
+        <Trash2 className="h-4 w-4" />
+        <span className="sr-only">Open</span>
+      </Button>
     </>
   );
 }
@@ -201,6 +240,7 @@ export interface files {
   content_type?: string; //file type
   is_favorite?: boolean; //file type
   formatted_file_size?: string; //file type
+  is_public: boolean; //folder type
 }
 
 async function downloadWithFetch(url: string, filename: string) {

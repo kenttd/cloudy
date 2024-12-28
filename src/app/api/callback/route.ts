@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     console.log("User in database:", userRes);
 
     const token = jwt.sign(
-      { id: userRes._id, root: rootFolderId },
+      { id: userRes._id, root: rootFolderId, role: userRes.role },
       process.env.JWT_SECRET ?? ""
     );
     const tokenLoc = jwt.sign(

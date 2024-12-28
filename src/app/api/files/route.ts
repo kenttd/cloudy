@@ -2,8 +2,19 @@ import { files } from "@/models/files";
 import { folders } from "@/models/folders";
 import { verify } from "jsonwebtoken";
 import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { users } from "@/models/users";
+import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
+
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 export async function GET() {
   try {
@@ -30,6 +41,44 @@ export async function GET() {
     return NextResponse.json({}, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const data = await req.json();
+    const file = await files.findOne({ _id: new ObjectId(data.id) });
+    if (!file) {
+      return NextResponse.json({ message: "File not found" }, { status: 404 });
+    }
+    const cookieStore = cookies();
+    const token = cookieStore.get("token");
+    const { value }: any = token || {};
+    const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
+      id: string;
+    };
+    if (file.user_id.toString() !== decoded.id) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: file.s3_key,
+    };
+    const command = new DeleteObjectCommand(params);
+    await s3Client.send(command);
+    await files.updateOne(
+      { _id: new ObjectId(data.id) },
+      { $set: { is_deleted: true } }
+    );
+    await users.updateOne(
+      { _id: new ObjectId(data.id) },
+      { $inc: { used_storage: -file.file_size } }
+    );
+    return NextResponse.json({ message: "File deleted" }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching user files and folders:", error);
+    return NextResponse.json({ error }, { status: 500 });
+  }
+}
+
 interface FileOrFolderResult {
   _id: Types.ObjectId;
   name: string;
@@ -97,6 +146,7 @@ async function getUserFilesAndFolders(
         parent_folder: 1,
         created_at: 1,
         updated_at: 1,
+        is_public: 1,
       },
     },
   ]);

@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    console.log("masuk");
     const cookieStore = cookies();
     const token = cookieStore.get("token");
     const { value }: any = token || {};

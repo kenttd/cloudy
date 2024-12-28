@@ -11,19 +11,30 @@ export async function GET(
   { params }: { params: { folderId: string } }
 ) {
   const folderId = params.folderId;
-  const cookieStore = cookies();
-  const token = cookieStore.get("token");
-  const { value }: any = token || {};
-  const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
-    id: string;
-  };
-  const allowed = await permissions.findOne({
-    folderId: folderId,
-    userId: decoded.id,
-  });
-  if (!allowed) {
-    return NextResponse.json({}, { status: 403 });
+  const folder = await folders.findById(folderId);
+  if (!folder) {
+    return NextResponse.json({}, { status: 404 });
   }
+
+  if (!folder.is_public) {
+    const cookieStore = cookies();
+    const token = cookieStore.get("token");
+    const { value }: any = token || {};
+    const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
+      id: string;
+      role: string;
+    };
+    if (decoded.role != "admin") {
+      const allowed = await permissions.findOne({
+        folderId: folderId,
+        userId: decoded.id,
+      });
+      if (!allowed) {
+        return NextResponse.json({}, { status: 403 });
+      }
+    }
+  }
+  console.log("masuk");
   const result = await getUserFilesAndFolders(folderId);
   return NextResponse.json(result);
 }

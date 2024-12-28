@@ -1,22 +1,16 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { FileUploader } from "@/components/file-uploader";
-import Logo from "@/assets/logo.png";
-import Image from "next/image";
-import SideBar from "@/components/SideBar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import SideBar from "@/components/Sidebar";
 import FileCard, { files } from "@/components/FileCard";
 import { Search } from "lucide-react";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { useEffect, useState } from "react";
 import FileCardSkeleton from "@/components/FileCardSkeleton";
 import useUserStore from "@/store/UserStore";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Component() {
   const [files, setFiles] = useState<null | files[]>(null);
@@ -26,7 +20,7 @@ export default function Component() {
 
   useEffect(() => {
     const fetchFiles = async () => {
-      setFiles(null); // Set to null to show loading state
+      setFiles(null);
       try {
         const response = await fetch("/api/favorite");
         const data = await response.json();
@@ -34,7 +28,6 @@ export default function Component() {
         setFiles(data);
       } catch (error) {
         console.error("Error fetching files:", error);
-        // Handle error state if needed
       }
     };
 
