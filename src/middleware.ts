@@ -18,16 +18,21 @@ export async function middleware(request: NextRequest) {
     }
     let token = request.cookies.get("token")?.value;
     if (!token) return NextResponse.redirect(new URL("/login", request.url));
-    // console.log("cookie", cookie.value);
-    // console.log("test bool", !cookie);
-    // console.log(request.nextUrl.pathname);
-    // console.log(request.nextUrl.pathname === "/home");
-    // console.log("test");
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
+    if (
+      request.nextUrl.pathname.startsWith("/admin") ||
+      request.nextUrl.pathname.startsWith("/api/admin")
+    ) {
+      if (payload.role !== "admin") {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+    }
+
     if (request.nextUrl.pathname === "/") {
       return NextResponse.redirect(new URL("/home", request.url));
     }
+
     if (request.nextUrl.pathname.startsWith("/home")) {
       const response = NextResponse.next();
       const jwt = await new SignJWT({ location: payload.root })
