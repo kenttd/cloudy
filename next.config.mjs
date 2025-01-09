@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     instrumentationHook: true,
-    runtime: "nodejs",
+    missingSuspenseWithCSRBailout: false,
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if
