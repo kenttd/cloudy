@@ -144,6 +144,9 @@ export function FileUploader(props: FileUploaderProps) {
         setFiles([]);
         onUpload?.(filesToUpload);
         handleRefresh();
+        if (data.skip) {
+          return `Your storage is full and ${data.skipped_files.length} files are skipped`;
+        }
         return `Successfully uploaded ${filesToUpload.length} file${
           filesToUpload.length > 1 ? "s" : ""
         }`;
@@ -173,7 +176,7 @@ export function FileUploader(props: FileUploaderProps) {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-        }),
+        })
       );
 
       const updatedFiles = files ? [...files, ...newFiles] : newFiles;
@@ -188,7 +191,7 @@ export function FileUploader(props: FileUploaderProps) {
       }
     },
 
-    [files, maxFileCount, multiple, onUpload, setFiles],
+    [files, maxFileCount, multiple, onUpload, setFiles]
   );
 
   function onRemove(index: number) {
@@ -231,7 +234,7 @@ export function FileUploader(props: FileUploaderProps) {
               "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isDragActive && "border-muted-foreground/50",
               isDisabled && "pointer-events-none opacity-60",
-              className,
+              className
             )}
             {...dropzoneProps}
           >

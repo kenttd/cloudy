@@ -26,13 +26,38 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 export default function Component() {
   const [files, setFiles] = useState<null | files[]>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [breadcrumb, setBreadcrumb] = useState(null);
-  const { user, isFetched, isLoading, error, fetchUser, refresh } =
-    useUserStore();
+  const { user, fetchUser, refresh } = useUserStore();
+  const searchParams = useSearchParams();
+  const session_id = searchParams.get("session_id");
+  useEffect(() => {
+    if (session_id) {
+      const aPromise = fetch(
+        "/api/purchase/verify?session_id=" + session_id
+      ).then(async (response) => {
+        if (!response.ok) {
+          throw new Error("Upload failed");
+        }
+        return response.json();
+      });
+      toast.promise(aPromise, {
+        loading: `Verifiying payment...`,
+        success: async (data: any) => {
+          handleRefresh();
+          return `Successfully verified payment`;
+        },
+        error: (err: any) => {
+          console.error("Purchase failed! Unable to verify payment");
+          return "Purchase failed! Unable to verify payment";
+        },
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -71,23 +96,12 @@ export default function Component() {
             <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
               <div className="flex items-center space-x-2">
                 <SidebarTrigger className="-ml-1 rounded-none" />
-
                 <div className="text-lg">
                   {breadcrumb ? (
                     <DynamicBreadcrumb items={breadcrumb} />
                   ) : (
                     <Skeleton className="h-4 w-5" />
                   )}
-                  {/* <div className="flex items-center gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search files and folders..."
-                    className="w-full bg-muted pl-8 pr-4 focus:bg-background focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-              </div> */}
                 </div>
               </div>
             </header>

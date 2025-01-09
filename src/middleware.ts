@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.startsWith("/api/admin")
     ) {
       if (payload.role !== "admin") {
-        return NextResponse.redirect(new URL("/login", request.url));
+        return NextResponse.redirect(new URL("/home", request.url));
       }
     }
 

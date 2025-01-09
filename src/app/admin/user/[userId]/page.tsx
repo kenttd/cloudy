@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { toast } from "sonner";
+import { EditUserButton } from "@/components/EditUserButton";
 
 export default function Component() {
   const params = useParams<{ userId: string }>();
@@ -35,7 +37,7 @@ export default function Component() {
         setUserCur(data.user);
         setContents(data.contents);
       });
-  }, []);
+  }, [refreshKey]);
 
   useEffect(() => {
     fetchUser("/api/user");
@@ -61,7 +63,15 @@ export default function Component() {
             <main className="flex-1 p-4 md:p-6 overflow-auto">
               {userCur && (
                 <div>
-                  <h1 className="text-2xl font-semibold">User Details</h1>
+                  <div className="flex space-x-4">
+                    <h1 className="text-2xl font-semibold">User Details</h1>
+                    <EditUserButton
+                      user={userCur}
+                      refresh={() => {
+                        setRefreshKey(refreshKey + 1);
+                      }}
+                    />
+                  </div>
                   <div>
                     <Image
                       src={userCur.avatar}
@@ -140,6 +150,43 @@ function Tree({ item }: { item: FolderContents }) {
                 <File />
                 <span>{file.file_name}</span>
                 {file.is_favorite && <Badge>Favorite</Badge>}
+                <Button
+                  onClick={async () => {
+                    toast(`Getting url for ${file.file_name}...`);
+                    try {
+                      const response = await fetch(
+                        `/api/files/${encodeURIComponent(
+                          file.s3_key!
+                        )}/download-url`,
+                        {
+                          method: "GET",
+                        }
+                      );
+
+                      if (!response.ok) throw new Error("Download failed");
+
+                      const blob = await response.blob();
+                      const filename =
+                        response.headers
+                          .get("Content-Disposition")
+                          ?.split("filename=")[1]
+                          ?.replace(/"/g, "") || "download";
+
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = filename;
+                      document.body.appendChild(link);
+                      link.click();
+                      link.parentNode!.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    } catch (err) {
+                    } finally {
+                    }
+                  }}
+                >
+                  Download
+                </Button>
               </div>
             ))}
             {/* Render subfolders */}
@@ -167,6 +214,7 @@ interface FolderContents {
     content_type: string;
     is_favorite: boolean;
     is_deleted: boolean;
+    s3_key: string;
   }[];
   subfolders: FolderContents[];
 }

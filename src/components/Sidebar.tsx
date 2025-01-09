@@ -43,6 +43,23 @@ import { Progress } from "./ui/progress";
 import { useEffect, useState } from "react";
 import { url } from "inspector";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Label } from "./ui/label";
+import { Button } from "./ui/button";
+import {
+  Offering,
+  OfferingWrapper,
+  Price,
+  PriceCard,
+  ProductName,
+} from "./Pricing";
+import { Description } from "@radix-ui/react-dialog";
 
 const sidebarUser = [
   {
@@ -108,15 +125,7 @@ export default function SideBar({
   };
   handleRefresh: () => void;
 }) {
-  const {
-    state,
-    open,
-    setOpen,
-    openMobile,
-    setOpenMobile,
-    isMobile,
-    toggleSidebar,
-  } = useSidebar();
+  const { open } = useSidebar();
   console.log("user", user);
   console.log("handle sidebar", handleRefresh);
   const [data, setData] = useState<
@@ -181,6 +190,79 @@ export default function SideBar({
                   <p className="text-xs mt-1">{`${formatBytes(
                     user.used_storage
                   )} of ${formatBytes(user.storage_limit)} used`}</p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <div className="flex items-center space-x-2 mt-3 cursor-pointer">
+                        <Sparkles className="mr-3" size={20} />
+                        <div className="text-base">Upgrade your account</div>
+                      </div>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-max">
+                      <DialogHeader>
+                        <DialogTitle>Upgrade your account</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-x-5 py-4 flex px-4">
+                        <PriceCard
+                          contactPageHref={"/api/purchase?tier=1"}
+                          className="justify-between"
+                        >
+                          <ProductName className="text-black">
+                            Plan A
+                          </ProductName>
+                          <Price>$1000</Price>
+                          <Description>
+                            1GB storage plan to keep your essential files safe
+                            and accessible, with easy sharing options.
+                          </Description>
+                          <OfferingWrapper>
+                            <Offering>1GB Cloud Storage</Offering>
+                            <Offering>Unlimited File Uploads</Offering>
+                            <Offering>File Sharing Links</Offering>
+                            <Offering>Basic Support</Offering>
+                          </OfferingWrapper>
+                        </PriceCard>
+
+                        <PriceCard contactPageHref={"/api/purchase?tier=2"}>
+                          <ProductName className="text-black">
+                            Plan B
+                          </ProductName>
+                          <Price>$2000</Price>
+                          <Description>
+                            2GB storage plan for users who need a bit more space
+                            for their growing needs.
+                          </Description>
+                          <OfferingWrapper>
+                            <Offering>2GB Cloud Storage</Offering>
+                            <Offering>Unlimited File Uploads</Offering>
+                            <Offering>
+                              File Sharing Links with Insights
+                            </Offering>
+                            <Offering>Priority Support</Offering>
+                          </OfferingWrapper>
+                        </PriceCard>
+
+                        <PriceCard contactPageHref={"/api/purchase?tier=3"}>
+                          <ProductName className="text-black">
+                            Plan C
+                          </ProductName>
+                          <Price>$3000</Price>
+                          <Description>
+                            3GB storage plan for users who want premium features
+                            and ample space for all their files.
+                          </Description>
+                          <OfferingWrapper>
+                            <Offering>4GB Cloud Storage</Offering>
+                            <Offering>Unlimited File Uploads</Offering>
+                            <Offering>
+                              Advanced Link Sharing with Insights
+                            </Offering>
+                            <Offering>Admin User Management</Offering>
+                            <Offering>Premium Support</Offering>
+                          </OfferingWrapper>
+                        </PriceCard>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </>
             ) : (
@@ -227,10 +309,6 @@ export default function SideBar({
               >
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    {/* <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                    </Avatar> */}
                     <Image
                       src={user.avatar}
                       alt="user avatar"
@@ -246,13 +324,6 @@ export default function SideBar({
                     </div>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <Sparkles className="mr-3" />
-                    Upgrade to Pro
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-3" />

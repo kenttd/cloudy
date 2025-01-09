@@ -70,9 +70,10 @@ export async function DELETE(req: Request) {
       { $set: { is_deleted: true } }
     );
     await users.updateOne(
-      { _id: new ObjectId(data.id) },
+      { _id: decoded.id },
       { $inc: { used_storage: -file.file_size } }
     );
+    console.log(data.id);
     return NextResponse.json({ message: "File deleted" }, { status: 200 });
   } catch (error) {
     console.error("Error fetching user files and folders:", error);

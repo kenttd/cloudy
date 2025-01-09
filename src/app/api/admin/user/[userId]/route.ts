@@ -105,6 +105,7 @@ async function getFolderContents(
       content_type: file.content_type,
       is_favorite: file.is_favorite,
       is_deleted: file.is_deleted,
+      s3_key: file.s3_key,
     })),
     subfolders: subfolderContents.filter(Boolean) as FolderContents[], // Filter out null values
   };
