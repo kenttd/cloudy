@@ -147,9 +147,12 @@ function FolderButtons({
         variant="ghost"
         size="icon"
         className="group-hover:opacity-100"
-        disabled
+        onClick={() => {
+          console.log(file._id);
+          window.location.href = `/shared-with-me/${file._id}`;
+        }}
       >
-        <Lock className="h-4 w-4" />
+        <FolderOpen className="h-4 w-4" />
         <span className="sr-only">Open Folder</span>
       </Button>
     </>

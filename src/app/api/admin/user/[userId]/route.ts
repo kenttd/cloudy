@@ -23,15 +23,12 @@ export async function GET(
       formatted_used_storage: formatBytes(user.used_storage),
       created_at: new Date(user.created_at).toDateString(),
     };
-    // user.formatted_storage_limit = formatBytes(user.storage_limit);
-    // user.formatted_used_storage = formatBytes(user.used_storage);
-    // user.created_at = new Date(user.created_at).toDateString();
 
     const rootFolder = await folders.findOne({
       parent_folder: null,
       user_id: user._id,
     });
-
+    console.log(rootFolder);
     const folderId = new Types.ObjectId(rootFolder._id);
     const contents = await getFolderContents(folderId);
     return NextResponse.json({ user: userResult, contents });

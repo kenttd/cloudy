@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
     const { tier, id } = session.metadata!;
     await users.updateOne(
       { _id: id },
-      { storage_limit: parseInt(tier) * 1024 * 1024 * 1024 }
+      // { storage_limit: parseInt(tier) * 1024 * 1024 * 1024 }
+      { $inc: { storage_limit: parseInt(tier) * 1024 * 1024 * 1024 } }
     );
     return NextResponse.json({ message: "Success" });
   } catch (err) {

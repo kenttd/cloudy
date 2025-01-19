@@ -1,6 +1,7 @@
 import { files } from "@/models/files";
 import { folders } from "@/models/folders";
 import { permissions } from "@/models/permissions";
+import { users } from "@/models/users";
 import { verify } from "jsonwebtoken";
 import { Types } from "mongoose";
 import { cookies } from "next/headers";
@@ -22,19 +23,24 @@ export async function GET(
     const { value }: any = token || {};
     const decoded = verify(value, process.env.JWT_SECRET!) as unknown as {
       id: string;
-      role: string;
+      // role: string;
     };
-    if (decoded.role != "admin") {
+    const user = await users.findById(decoded.id);
+    console.log("1");
+    if (user.role != "admin") {
+      console.log("2");
+
       const allowed = await permissions.findOne({
         folderId: folderId,
         userId: decoded.id,
       });
+      console.log("hasil allowed", allowed);
       if (!allowed) {
         return NextResponse.json({}, { status: 403 });
       }
     }
   }
-  console.log("masuk");
+  console.log("3");
   const result = await getUserFilesAndFolders(folderId);
   return NextResponse.json(result);
 }
