@@ -73,11 +73,6 @@ const sidebarUser = [
     icon: Users,
   },
   {
-    name: "Trash",
-    url: "/trash",
-    icon: Trash2,
-  },
-  {
     name: "Starred",
     url: "/starred",
     icon: Star,
@@ -93,11 +88,6 @@ const sidebarAdmin = [
     name: "Shared with me",
     url: "/shared-with-me",
     icon: Users,
-  },
-  {
-    name: "Trash",
-    url: "/trash",
-    icon: Trash2,
   },
   {
     name: "Starred",
