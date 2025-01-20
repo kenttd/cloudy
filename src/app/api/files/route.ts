@@ -115,14 +115,34 @@ async function getUserFilesAndFolders(
           : { parent_folder: null }),
       },
     },
+    // {
+    //   $lookup: {
+    //     from: "files",
+    //     localField: "_id",
+    //     foreignField: "folder_id",
+    //     as: "files",
+    //   },
+    // },
     {
       $lookup: {
         from: "files",
-        localField: "_id",
-        foreignField: "folder_id",
+        let: { folderId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$folder_id", "$$folderId"] },
+                  { $eq: ["$is_deleted", false] },
+                ],
+              },
+            },
+          },
+        ],
         as: "files",
       },
     },
+
     {
       $lookup: {
         from: "folders",
