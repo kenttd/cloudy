@@ -96,25 +96,25 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-LOAD DATABASE
-    FROM sourcedb://root:@127.0.0.1/lernen_db
-    INTO postgresql://postgres:Softtestpass231@db.yusmfyamveopwrpgmhvg.supabase.co:5432/postgres
-ALTER SCHEMA 'public' OWNER TO 'postgres';
-set wal_buffers = '64MB', max_wal_senders = 0, statement_timeout = 0, work_mem to '2GB';
+// LOAD DATABASE
+//     FROM sourcedb://root:@127.0.0.1/lernen_db
+//     INTO postgresql://postgres:Softtestpass231@db.yusmfyamveopwrpgmhvg.supabase.co:5432/postgres
+// ALTER SCHEMA 'public' OWNER TO 'postgres';
+// set wal_buffers = '64MB', max_wal_senders = 0, statement_timeout = 0, work_mem to '2GB';
 
-LOAD DATABASE
-     FROM mysql://root:@127.0.0.1/lernen_db
-     INTO postgresql://postgres:Softtestpass231@db.ejpmiieqfymgvnjnjvlm.supabase.co:5432/postgres
-WITH include no drop, create tables, create indexes, reset sequences
-     set work_mem to '2GB', maintenance_work_mem to '512MB',
-     max_wal_size to '64MB', statement_timeout to '0';
-     postgres://neondb_owner:LWsDw67GEdNm@ep-billowing-breeze-a4nvc9bg-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
-     
-LOAD DATABASE
-     FROM mysql://root:@127.0.0.1/lernen_db
-     INTO postgres://neondb_owner:LWsDw67GEdNm@ep-billowing-breeze-a4nvc9bg-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
-WITH include no drop, create tables, create indexes, reset sequences
-     set work_mem to '2GB', maintenance_work_mem to '512MB',
-     max_wal_size to '64MB', statement_timeout to '0';
+// LOAD DATABASE
+//      FROM mysql://root:@127.0.0.1/lernen_db
+//      INTO postgresql://postgres:Softtestpass231@db.ejpmiieqfymgvnjnjvlm.supabase.co:5432/postgres
+// WITH include no drop, create tables, create indexes, reset sequences
+//      set work_mem to '2GB', maintenance_work_mem to '512MB',
+//      max_wal_size to '64MB', statement_timeout to '0';
+//      postgres://neondb_owner:LWsDw67GEdNm@ep-billowing-breeze-a4nvc9bg-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
 
-     postgresql://postgres:Softtestpass231@db.ejpmiieqfymgvnjnjvlm.supabase.co:5432/postgres
+// LOAD DATABASE
+//      FROM mysql://root:@127.0.0.1/lernen_db
+//      INTO postgres://neondb_owner:LWsDw67GEdNm@ep-billowing-breeze-a4nvc9bg-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require
+// WITH include no drop, create tables, create indexes, reset sequences
+//      set work_mem to '2GB', maintenance_work_mem to '512MB',
+//      max_wal_size to '64MB', statement_timeout to '0';
+
+//      postgresql://postgres:Softtestpass231@db.ejpmiieqfymgvnjnjvlm.supabase.co:5432/postgres
